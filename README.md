@@ -1,15 +1,17 @@
-### danube_submit_job is an in-house application tuned to the needs of Danube pipeline.  We have to manually pace submitting lots of resources when we push Danube transformation changes since there is limited infrastsructure resource.  Danube_sumbit_job is to automate the process. The application allow the user to submit a batch of multiple jobs once then the cron job pick in to submit individual job in order if all required conditions are met.   The required conditions including the maximum message count in mysql queue table, the maximum memory used by RabbitMQ and the minimum free memory of the server hosting the submission app are configurable. 
-#### submit_job.py is a rich python application.  I use it as a reference application.  It includes the following techinque:
+### danube_submit_job is an in-house application tuned to the needs of Danube pipeline.  We have to manually pace submitting lots of resources when we push Danube transformation changes since there is limited infrastsructure resource.  Danube_sumbit_job automates the process. The application allows the user to submit a batch of multiple jobs once then the cron job pick in to submit the individual job if all required conditions are met.   The required conditions. including the maximum message count in mysql queue table, the maximum memory used by RabbitMQ and the minimum free memory of the server hosting the submission application, are configurable. 
+#### submit_job.py is a rich python application.  I use it as a reference application.  It includes the following techinques:
      
 1. subprocess to open a sub-process to execute bash or other application.  It has 'call' method and 'Popen' 
    (pipe open method).  The followings are two examples:
 
     
     command = 'bash %s/submit %s -j %d &' % (submit_folder, m.group(2), job_id)
+    
     FNULL = open(os.devnull, 'w')
     return subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT, shell=True) 
      
     describe_cluster = 'aws emr describe-cluster --cluster-id %s' % cluster_id
+    
     proc_describe_cluster = subprocess.Popen(describe_cluster.split(), stdout=subprocess.PIPE)
     stdoutdata, _ = proc_describe_cluster.communicate()     
        
@@ -22,6 +24,7 @@
      
     stdoutdata, _ = proc_describe_cluster.communicate()
     describe_cluster_json = json.loads(stdoutdata)
+    
     state = describe_cluster_json['Cluster']['Status']['State']
     
     
