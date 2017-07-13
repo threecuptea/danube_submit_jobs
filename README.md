@@ -1,4 +1,4 @@
-### danube_submit_job is an in-house application tuned to the needs of Danube pipeline.  We have to manually pace submitting lots of resources when we push Danube transformation changes since there is limited infrastsructure resource.  Danube_sumbit_job automates the process. The application allows the user to submit a batch of multiple jobs once then the cron job pick in to submit the individual job if all required conditions are met.   The required conditions. including the maximum message count in mysql queue table, the maximum memory used by RabbitMQ and the minimum free memory of the server hosting the submission application, are configurable. 
+### danube_submit_job is an in-house application tuned to the needs of Danube pipeline.  We have to manually pace submitting lots of resources when we push Danube transformation changes since there is limited infrastsructure resource.  Danube_sumbit_job automates the process. The application allows the user to submit a batch of multiple jobs once then the cron job pick in to submit the individual job if all required conditions are met.   The required conditions, including the maximum message count in mysql queue table, the maximum memory used by RabbitMQ and the minimum free memory of the server hosting the submission application, are configurable. 
 #### submit_job.py is a rich python application.  I use it as a reference application.  It includes the following techinques:
      
 1. subprocess to open a sub-process to execute bash or other application.  It has 'call' method and 'Popen' 
@@ -72,15 +72,15 @@
         elif args.schedule:
           if args.jobs_input_file is None:  
         
- 7. os.path isFile, dirname, basename, join.  raw_input is built-in method.
+ 7. os.path has isFile, dirname, basename, join methods.  raw_input is a built-in method.
         
      
         if os.path.isfile(path):
-        with open(path, 'r', 0x4000) as f:
-          for line in f:
-            if line[0] in ['#', '!']:
-              continue
-            line = line.rstrip()
+          with open(path, 'r', 0x4000) as f:
+            for line in f:
+              if line[0] in ['#', '!']:
+                continue
+              line = line.rstrip()
             
         dir,file_name = os.path.split(input_file)
         subpath = os.path.basename(dir)    
