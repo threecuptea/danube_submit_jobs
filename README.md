@@ -5,29 +5,24 @@
    (pipe open method).  The followings are two examples:
 
     
-    command = 'bash %s/submit %s -j %d &' % (submit_folder, m.group(2), job_id)
-    
-    FNULL = open(os.devnull, 'w')
-    return subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT, shell=True) 
+        command = 'bash %s/submit %s -j %d &' % (submit_folder, m.group(2), job_id)    
+        FNULL = open(os.devnull, 'w')
+        return subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT, shell=True) 
      
-    describe_cluster = 'aws emr describe-cluster --cluster-id %s' % cluster_id
-    
-    proc_describe_cluster = subprocess.Popen(describe_cluster.split(), stdout=subprocess.PIPE)
-    
-    stdoutdata, _ = proc_describe_cluster.communicate()     
+        describe_cluster = 'aws emr describe-cluster --cluster-id %s' % cluster_id    
+        proc_describe_cluster = subprocess.Popen(describe_cluster.split(), stdout=subprocess.PIPE)    
+        stdoutdata, _ = proc_describe_cluster.communicate()     
        
 2.  json has popular dump (print pretty), load (from io) and loads (from string) methods. 
     It is in dictionary form once parsed.
 
    
-    print json.dumps({'4': 5, '6': 7}, sort_keys=True, indent=4, separators=(',', ': '))    
-    cluster_id = json.load(sys.stdin)['ClusterId']
+        print json.dumps({'4': 5, '6': 7}, sort_keys=True, indent=4, separators=(',', ': '))    
+        cluster_id = json.load(sys.stdin)['ClusterId']
      
-    stdoutdata, _ = proc_describe_cluster.communicate()
-    
-    describe_cluster_json = json.loads(stdoutdata)
-    
-    state = describe_cluster_json['Cluster']['Status']['State']
+        stdoutdata, _ = proc_describe_cluster.communicate()    
+        describe_cluster_json = json.loads(stdoutdata)    
+        state = describe_cluster_json['Cluster']['Status']['State']
     
     
  3. re (regular expression) has match method   
