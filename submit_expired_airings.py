@@ -10,7 +10,6 @@ import json
 from datetime import datetime, timedelta
 import subprocess
 import sys
-import itertools
 
 # Need to work with Alon to deploy it to docker
 
@@ -34,8 +33,6 @@ class MongoDao:
         # Replace days.threashold
         dict_replace(self.query_json, 'days.threshold', utc_then_zero)
 
-        json_list = json.loads(config.get('section', 'mongo.sort'))
-        self.sort_list = convert_mongo_sort(json_list)
 
     def do_cleanup(self):
         self.cursor.close()
@@ -43,8 +40,7 @@ class MongoDao:
 
     def do_get_cursor(self):
         logger.info('query= ' + json.dumps(self.query_json, default=date_handler))
-        logger.info(self.sort_list)
-        self.cursor = self.collection.find(self.query_json).sort(self.sort_list)
+        self.cursor = self.collection.find(self.query_json)
         return self.cursor
 
 
@@ -55,14 +51,6 @@ def dict_replace(input_dict, repl_from, repl_to):
         elif value == repl_from:
             input_dict[key] = repl_to
             return
-
-def convert_mongo_sort(json_list):
-    # '[{"at" : 1},{"_pub": 1}]', this should be valid json.  I have to keep the order therefore, I cannot isolate each dictionary
-    # d = { 'a': 1, 'b': 2}, d.items() => [('a', 1), ('c', 3), ('b', 2)]. Transformed to [[("at", 1)],[("_pub", 1)]]
-    temp2 = [d.items() for d in json_list] # comprehension
-    # then flat it
-    return list(itertools.chain.from_iterable(temp2))
-
 
 def date_handler(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
@@ -87,8 +75,9 @@ def get_config():
 if __name__ == '__main__':
     # get config from property file
     config = get_config()
+    log_config_path = config.get('section', 'log.conf.path')
+    logging.config.fileConfig(log_config_path)
 
-    logging.config.fileConfig('logging.conf') #logging.conf is the file name
     global logger
     logger = logging.getLogger('SubmitLogger')
     logger.info('Loading config: %s', config.items('section'))
@@ -116,6 +105,7 @@ if __name__ == '__main__':
     logger.info('Submitting....., command=  %s' % command)
     FNULL = open(os.devnull, 'w')
     subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT, shell=True)
+    logger.info('')
 
 
 
